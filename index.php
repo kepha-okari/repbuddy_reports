@@ -125,19 +125,17 @@
 
 					<script>
 						let totalTasksCount = 0;
-						// Define and initialize other variables
 						let overallTotalCompleted = 0;
 						let overallCompletionRate = 0;
+
 						// Function to make a GET request and populate the table
 						function fetchData() {
 							// Replace with your API URL
-							const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 							const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
 
 							const currentDate = new Date();
 
-					
-							fetch(corsProxyUrl + apiUrl)
+							fetch(apiUrl)
 								.then(response => response.json())
 								.then(data => {
 									if (data.status) {
@@ -148,7 +146,6 @@
 
 										// Group activities by user name
 										const groupedActivities = groupActivitiesByUserName(activities);
-										
 
 										const tableBody = document.getElementById('table-body');
 
