@@ -58,7 +58,7 @@
 		<main>
 			<div class="head-title">
 				<div class="left">
-					<h1>Dashboard</h1>
+					<h1>Activity Dashboard</h1>
 					<ul class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
@@ -131,7 +131,7 @@
 						// Function to make a GET request and populate the table
 						function fetchData() {
 							// Replace with your API URL
-							const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2023-04-24';
+							const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
 
 							const currentDate = new Date();
 
@@ -233,3 +233,6 @@
 	<script src="script.js"></script>
 </body>
 </html>
+
+
+<!-- change the date and ip address -->

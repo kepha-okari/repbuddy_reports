@@ -58,10 +58,9 @@
 		<main>
 			<div class="head-title">
 				<div class="left">
-					<h1>Dashboard</h1>
+					<h1>Products Report</h1>
 					<ul class="breadcrumb">
 						<li>
-							<a href="#">Dashboard</a>
 						</li>
 						<li><i class='bx bx-chevron-right' ></i></li>
 						<li>
@@ -75,44 +74,34 @@
 				<li>
 					<i class='bx bxs-calendar-check'></i>
 					<span class="text">
-					<h3 id="total-tasks"></h3>
-					<p>Total Tasks</p>
+					<h3 id="total-products"></h3>
+					<p>Total Products Pushed</p>
 					</span>
 				</li>
-				<li>
+				<!-- <li>
 					<i class='bx bxs-group'></i>
 					<span class="text">
-					<h3 id="overall-total-completed"></h3>
+					<h3 id="overall-adoption"></h3>
 					<p>Total Completed</p>
 					</span>
-				</li>
-				<li>
-					<i class='bx bxs-dollar-circle'></i>
-					<span class="text">
-					<h3 id="overall-completion-rate"></h3>
-					<p>Completion Rate</p>
-					</span>
-				</li>
+				</li> -->
+		
 			</ul>
 
 
 			<div class="table-data">
 				<div class="order">
 					<div class="head">
-						<h3>Active Reps</h3>
+						<h3>Products List Summary</h3>
 						<i class='bx bx-search' ></i>
 						<i class='bx bx-filter' ></i>
 					</div>
 					<table>
 						<thead>
 							<tr>
-								<th>NAME</th>
-								<th>TASKS</th>
-								<th>PENDING</th>
-								<th>COMPLETED</th>
-								<th>RESCHEDULED</th>
-								<th>CANCELLED</th>
-								<th>COMPLETION RATE %</th>
+								<th>PRODUCT NAME</th>
+								<th>REPS</th>
+								<th>VISITS</th>
 								<th>ACTION</th>
 							</tr>
 						</thead>
@@ -123,118 +112,52 @@
 					</table>
 
 
-					<script>
-						let totalTasksCount = 0;
-						// Define and initialize other variables
-						let overallTotalCompleted = 0;
-						let overallCompletionRate = 0;
-						// Function to make a GET request and populate the table
-						function fetchData() {
-							// Replace with your API URL
-							const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2023-04-24';
-
-							const currentDate = new Date();
-
-					
-							fetch(apiUrl)
-								.then(response => response.json())
-								.then(data => {
-									if (data.status) {
-										const activities = data.data.activities;
-
-										const completedTasks = activities.filter(activity => activity.status === '2');
 
 
-										// Group activities by user name
-										const groupedActivities = groupActivitiesByUserName(activities);
-										
+				<script>
 
-										const tableBody = document.getElementById('table-body');
+					let allProducts = 0;
+					let averageAdoption = 0;
+					// Function to make a GET request and populate the product report table
+					function fetchData() {
+						const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/product-report';
 
-										// Loop through grouped activities
-										for (const userName in groupedActivities) {
-											if (groupedActivities.hasOwnProperty(userName)) {
-												const userActivities = groupedActivities[userName];
+						fetch(apiUrl)
+							.then(response => response.json())
+							.then(data => {
+								if (data.status) {
+									const productData = data.data.productData;
+									const tableBody = document.getElementById('table-body');
 
-												const row = document.createElement('tr');
+									allProducts = productData.length; // Update the global variable
+									// overallCompletionRate = (overallTotalCompleted/totalTasksCount * 100); // Update the global variable
 
-												const pendingCount = userActivities.filter(activity => activity.status === '1').length;
-												const completedCount = userActivities.filter(activity => activity.status === '2').length;
-												const rescheduledCount = userActivities.filter(activity => activity.status === '3').length;
-												const cancelledCount = userActivities.filter(activity => activity.status === '4').length;
+									// Update the "Total Tasks" value in the box-info section
+									document.getElementById('total-products').textContent = allProducts;
+									// document.getElementById('overall-total-completed').textContent = overallTotalCompleted;
+									// document.getElementById('overall-completion-rate').textContent = overallCompletionRate.toFixed(1)+"%";
 
-												totalTasksCount = activities.length; // Update the global variable
-												overallTotalCompleted = completedTasks.length; // Update the global variable
-												overallCompletionRate = (overallTotalCompleted/totalTasksCount * 100); // Update the global variable
+									productData.forEach(product => {
+										const row = document.createElement('tr');
+										row.innerHTML = `
+											<td>${product.product_name}</td>
+											<td>${product.rep_count}</td>
+											<td>${product.activity_count}</td>
+											<td><i class='bx bx-dots-vertical-rounded' ></i></td>
 
-												// Update the "Total Tasks" value in the box-info section
-												document.getElementById('total-tasks').textContent = totalTasksCount;
-												document.getElementById('overall-total-completed').textContent = overallTotalCompleted;
-												document.getElementById('overall-completion-rate').textContent = overallCompletionRate.toFixed(1)+"%";
-
-												
-												const rate = (completedCount/userActivities.length * 100);
-												row.innerHTML = `
-													<td>
-														<img src="img/people.png">
-														<p>${userName}</p>
-													</td>
-													<td>${userActivities.length}</td>
-													<td>${pendingCount}</td>
-													<td>${completedCount}</td>
-													<td>${rescheduledCount}</td>
-													<td>${cancelledCount}</td>
-													<td>${rate.toFixed(1)}</td>
-													<i class='bx bx-dots-vertical-rounded' ></i>
-												`;
-												tableBody.appendChild(row);
-											}
-										}
-									}
-								})
-								.catch(error => {
-									console.error('Error fetching data:', error);
-								});
-						}
-
-						// Helper function to map status code to status text
-						function getStatusText(statusCode) {
-							switch (statusCode) {
-								case '0':
-									return 'Pending';
-								case '1':
-									return 'Process';
-								case '2':
-									return 'COMPLETED';
-								case '3':
-									return 'Other Status';
-								default:
-									return 'Unknown';
-							}
-						}
-
-						// Helper function to group activities by user name
-						function groupActivitiesByUserName(activities) {
-							const groupedActivities = {};
-
-							activities.forEach(activity => {
-								if (activity.names in groupedActivities) {
-									groupedActivities[activity.names].push(activity);
-								} else {
-									groupedActivities[activity.names] = [activity];
+										`;
+										tableBody.appendChild(row);
+									});
 								}
+							})
+							.catch(error => {
+								console.error('Error fetching data:', error);
 							});
+					}
 
-							return groupedActivities;
-						}
-
-						// Load data when the page is ready
-						document.addEventListener('DOMContentLoaded', () => {
-							fetchData();
-						});
-					</script>
-
-
+					// Load data when the page is ready
+					document.addEventListener('DOMContentLoaded', fetchData);
+				</script>
 					
 				</div>
 			
