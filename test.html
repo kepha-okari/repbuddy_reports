@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Page</title>
+    <style>
+        /* Add your CSS styles here */
+        /* You can style the table, headers, and rows as needed */
+    </style>
+</head>
+<body>
+    <div class="table-data">
+        <div class="order">
+            <div class="head">
+                <h3>Recent Transactions</h3>
+                <i class='bx bx-search'></i>
+                <i class='bx bx-filter'></i>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Date Order</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Function to make a GET request and populate the table
+        function fetchData() {
+            // Replace with your API URL
+            const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2023-04-24';
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        const activities = data.data.activities;
+                        const tableBody = document.getElementById('table-body');
+
+                        activities.forEach(activity => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>
+                                    <p>${activity.names}</p>
+                                </td>
+                                <td>${activity.scheduled_date}</td>
+                                <td><span class="status">${getStatusText(activity.status)}</span></td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        // Helper function to map status code to status text
+        function getStatusText(statusCode) {
+            switch (statusCode) {
+                case '0':
+                    return 'Pending';
+                case '1':
+                    return 'Process';
+                case '2':
+                    return 'Completed';
+                case '3':
+                    return 'Other Status';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Load data when the page is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+    </script>
+</body>
+</html>
