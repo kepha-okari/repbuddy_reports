@@ -120,9 +120,11 @@
 					let averageAdoption = 0;
 					// Function to make a GET request and populate the product report table
 					function fetchData() {
-						const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/product-report';
+						const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
-						fetch(apiUrl)
+						const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/product-report';
+
+						fetch(corsProxyUrl + apiUrl)
 							.then(response => response.json())
 							.then(data => {
 								if (data.status) {

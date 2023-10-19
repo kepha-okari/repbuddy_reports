@@ -131,12 +131,13 @@
 						// Function to make a GET request and populate the table
 						function fetchData() {
 							// Replace with your API URL
-							const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
+							const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
+							const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
 
 							const currentDate = new Date();
 
 					
-							fetch(apiUrl)
+							fetch(corsProxyUrl + apiUrl)
 								.then(response => response.json())
 								.then(data => {
 									if (data.status) {
