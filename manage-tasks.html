@@ -68,7 +68,7 @@
                 <li>
                     <i class='bx bxs-calendar-check'></i>
                     <span class="text">
-                        <h3 id="total-users"></h3>
+                        <h3 id="total-tasks"></h3>
                         <p>Total Users Found</p>
                     </span>
                 </li>
@@ -86,8 +86,8 @@
                             <tr>
                                 <th>#</th>
                                 <th>Names</th>
-                                <th>MSISDN</th>
-                                <th>Email</th>
+                                <th>activity</th>
+                                <th>location</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -103,33 +103,33 @@
     
     <script>
         let counter = 0;
-        let allUsers = 0;
+        let allTasks = 0;
         // Function to make a GET request to your server-side proxy and populate the Users report table
         function fetchData() {
-            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-users'; // Replace with the actual URL of your server-side proxy
+            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-activities'; // Replace with the actual URL of your server-side proxy
         
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
-                        const usersData = data.users;
+                        const tasksData = data.activities;
                         const tableBody = document.getElementById('table-body');
                         
-                        allUsers = usersData.length; // Update the global variable
+                        allTasks = tasksData.length; // Update the global variable
                         
-                        // Update the "Total Users Found" value in the box-info section
-                        document.getElementById('total-users').textContent = allUsers;
+                        // Update the "Total Tasks Found" value in the box-info section
+                        document.getElementById('total-tasks').textContent = allTasks;
                         
-                        usersData.forEach(user => {
+                        tasksData.forEach(task => {
                             counter++;
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>${counter}</td>
-                                <td>${user.names}</td>
-                                <td>${user.msisdn}</td>
-                                <td>${user.email}</td>
-                                <td>${user.status}</td>
-                                <td><a href="index.php?id=${user.id}"><span class="status pending">track</span></a></td>
+                                <td>${task.sales_rep_name}</td>
+                                <td>${task.activity_name}</td>
+                                <td>${task.pinned_location}</td>
+                                <td>${task.status}</td>
+                                <td><a href="index.php?id=${task.id}"><span class="status pending">track</span></a></td>
                             `;
                             tableBody.appendChild(row);
                         });

@@ -85,6 +85,7 @@
                         <thead>
                             <tr>
                                 <th>PRODUCT NAME</th>
+                                <th>ADOPTION STAGE</th>
                                 <th>REPS</th>
                                 <th>VISITS</th>
                                 <th>ACTION</th>
@@ -118,16 +119,17 @@
                         document.getElementById('total-products').textContent = allProducts;
 
                         productData.forEach(product => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${product.product_name}</td>
-                                <td>${product.rep_count}</td>
-                                <td>${product.activity_count}</td>
-                                <td><i class='bx bx-dots-vertical-rounded' ></i></td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
-                    }
+                        const row = document.createElement('tr');
+                        const randomValue = Math.floor(Math.random() * 4);
+                        row.innerHTML = `
+                            <td>${product.product_name}</td>
+                            <td>${randomValue}</td>
+                            <td>${product.rep_count}</td>
+                            <td>${product.activity_count}</td>
+                            <td><i class='bx bx-dots-vertical-rounded'></i>
+                        `;
+                        tableBody.appendChild(row);
+                    });                    }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
