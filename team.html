@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <title>RepBuddy</title>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <section id="sidebar"></section>
+    <!-- JavaScript to load the navigation bar -->
+    <script>
+        var sidebar = document.getElementById("sidebar");
+
+        fetch('sidebar.html') // Replace 'sidebar.html' with the correct path to your sidebar content
+            .then(response => response.text())
+            .then(data => {
+                sidebar.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching sidebar:', error);
+            });
+    </script>
+    <!-- SIDEBAR -->
+
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav id="navbarContainer"></nav>
+        <!-- JavaScript to load the navigation bar -->
+        <script>
+            var navbarContainer = document.getElementById("navbarContainer");
+
+            fetch('navbar.html') // Replace 'navbar.html' with the correct path to your navigation bar content
+                .then(response => response.text())
+                .then(data => {
+                    navbarContainer.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching navigation bar:', error);
+                });
+        </script>
+        <!-- NAVBAR -->
+
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Users Report</h1>
+                    <ul class="breadcrumb">
+                        <li></li>
+                        <li><i class='bx bx-chevron-right' ></i></li>
+                        <li>
+                            <a class="active" href="#">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <ul class="box-info">
+                <li>
+                    <i class='bx bxs-calendar-check'></i>
+                    <span class="text">
+                        <h3 id="total-users"></h3>
+                        <p>Total Users Found</p>
+                    </span>
+                </li>
+            </ul>
+
+            <div class="table-data">
+                <div class="order">
+                    <div class="head">
+                        <h3>Users List Summary</h3>
+                        <i class='bx bx-search' ></i>
+                        <i class='bx bx-filter' ></i>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Names</th>
+                                <th>MSISDN</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+
+    <script>
+        let counter = 0;
+        let allUsers = 0;
+        // Function to make a GET request to your server-side proxy and populate the Users report table
+        function fetchData() {
+            const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/fetch-users'; // Replace with the actual URL of your server-side proxy
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        const usersData = data.users;
+                        const tableBody = document.getElementById('table-body');
+
+                        allUsers = usersData.length; // Update the global variable
+
+                        // Update the "Total Users Found" value in the box-info section
+                        document.getElementById('total-users').textContent = allUsers;
+
+                        usersData.forEach(user => {
+                            counter++;
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${counter}</td>
+                                <td>${user.names}</td>
+                                <td>${user.msisdn}</td>
+                                <td>${user.email}</td>
+                                <td>${user.status}</td>
+                                <td><a href="index.php?id=${user.id}"><i class='bx bx-dots-vertical-rounded'></i></a></td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        // Load data when the page is ready
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+</body>
+</html>
