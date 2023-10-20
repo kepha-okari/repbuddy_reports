@@ -9,7 +9,7 @@
     <!-- My CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <title>AdminHub</title>
+    <title>RepBuddy</title>
 </head>
 <body>
 
@@ -121,6 +121,8 @@
                         productData.forEach(product => {
                         const row = document.createElement('tr');
                         const randomValue = Math.floor(Math.random() * 4);
+                
+
                         row.innerHTML = `
                             <td>${product.product_name}</td>
                             <td>${randomValue}</td>
