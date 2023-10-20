@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <!-- Boxicons -->
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <!-- My CSS -->
     <link rel="stylesheet" href="style.css">
-
-    <title>RepBuddy</title>
+    
+    <title>Users Report</title>
 </head>
 <body>
-
+    
     <!-- SIDEBAR -->
     <section id="sidebar"></section>
     <!-- JavaScript to load the navigation bar -->
     <script>
         var sidebar = document.getElementById("sidebar");
-
+        
         fetch('sidebar.html') // Replace 'sidebar.html' with the correct path to your sidebar content
             .then(response => response.text())
             .then(data => {
@@ -29,7 +29,7 @@
             });
     </script>
     <!-- SIDEBAR -->
-
+    
     <!-- CONTENT -->
     <section id="content">
         <!-- NAVBAR -->
@@ -37,7 +37,7 @@
         <!-- JavaScript to load the navigation bar -->
         <script>
             var navbarContainer = document.getElementById("navbarContainer");
-
+            
             fetch('navbar.html') // Replace 'navbar.html' with the correct path to your navigation bar content
                 .then(response => response.text())
                 .then(data => {
@@ -48,7 +48,7 @@
                 });
         </script>
         <!-- NAVBAR -->
-
+        
         <!-- MAIN -->
         <main>
             <div class="head-title">
@@ -63,7 +63,7 @@
                     </ul>
                 </div>
             </div>
-
+            
             <ul class="box-info">
                 <li>
                     <i class='bx bxs-calendar-check'></i>
@@ -73,7 +73,7 @@
                     </span>
                 </li>
             </ul>
-
+            
             <div class="table-data">
                 <div class="order">
                     <div class="head">
@@ -100,26 +100,26 @@
         <!-- MAIN -->
     </section>
     <!-- CONTENT -->
-
+    
     <script>
         let counter = 0;
         let allUsers = 0;
         // Function to make a GET request to your server-side proxy and populate the Users report table
         function fetchData() {
-            const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/fetch-users'; // Replace with the actual URL of your server-side proxy
-
+            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-users'; // Replace with the actual URL of your server-side proxy
+        
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
                         const usersData = data.users;
                         const tableBody = document.getElementById('table-body');
-
+                        
                         allUsers = usersData.length; // Update the global variable
-
+                        
                         // Update the "Total Users Found" value in the box-info section
                         document.getElementById('total-users').textContent = allUsers;
-
+                        
                         usersData.forEach(user => {
                             counter++;
                             const row = document.createElement('tr');
@@ -129,7 +129,7 @@
                                 <td>${user.msisdn}</td>
                                 <td>${user.email}</td>
                                 <td>${user.status}</td>
-                                <td><a href="index.php?id=${user.id}"><i class='bx bx-dots-vertical-rounded'></i></a></td>
+                                <td><a href="index.php?id=${user.id}"><i class='bx bx-eye'></i></a></td>
                             `;
                             tableBody.appendChild(row);
                         });
@@ -139,7 +139,7 @@
                     console.error('Error fetching data:', error);
                 });
         }
-
+        
         // Load data when the page is ready
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
