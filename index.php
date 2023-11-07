@@ -107,8 +107,8 @@
 						<thead>
 							<tr>
 								<th>NAME</th>
-								<th>TASKS</th>
-								<th>PENDING</th>
+								<th>AGENDAS</th>
+								<th>PRODUCTS</th>
 								<th>COMPLETED</th>
 								<th>RESCHEDULED</th>
 								<th>CANCELLED</th>

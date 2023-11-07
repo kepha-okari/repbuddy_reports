@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <title>Dashboard</title>
+</head>
+<body>
+    
+    <!-- SIDEBAR -->
+    <section id="sidebar"></section>
+    <!-- JavaScript to load the navigation bar -->
+    <script>
+        var sidebar = document.getElementById("sidebar");
+        
+        fetch('sidebar.html') // Replace 'sidebar.html' with the correct path to your sidebar content
+            .then(response => response.text())
+            .then(data => {
+                sidebar.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching sidebar:', error);
+            });
+    </script>
+    <!-- SIDEBAR -->
+    
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav id="navbarContainer"></nav>
+        <!-- JavaScript to load the navigation bar -->
+        <script>
+            var navbarContainer = document.getElementById("navbarContainer");
+            
+            fetch('navbar.html') // Replace 'navbar.html' with the correct path to your navigation bar content
+                .then(response => response.text())
+                .then(data => {
+                    navbarContainer.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching navigation bar:', error);
+                });
+        </script>
+        <!-- NAVBAR -->
+        
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Tasks Report</h1>
+                    <ul class="breadcrumb">
+                        <li></li>
+                        <li><i class='bx bx-chevron-right' ></i></li>
+                        <li>
+                            <a class="active" href="#">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+			<ul class="box-info">
+				<li>
+					<i class='bx bxs-calendar-check'></i>
+					<span class="text">
+					<h3 id="total-tasks"></h3>
+					<p>Agendas</p>
+					</span>
+				</li>
+				<li>
+					<i class='bx bxs-group'></i>
+					<span class="text">
+					<h3 id="overall-total-completed"></h3>
+					<p>Total Completed</p>
+					</span>
+				</li>
+				<li>
+					<i class='bx bxs-dollar-circle'></i>
+					<span class="text">
+					<h3 id="overall-completion-rate"></h3>
+					<p>Completion Rate</p>
+					</span>
+				</li>
+			</ul>
+
+            
+            <div class="table-data">
+                <div class="order col-md-8">
+                    <div class="head">
+                        <h3>Agenda Weekly Summary</h3>
+                        <i class='bx bx-search' ></i>
+                        <i class='bx bx-filter' ></i>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Sales Rep</th>
+                                <th>Agendas</th>
+                                <th>Products</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+                <!-- <div class="todo">
+					<div class="head">
+						<h3>Products Summary</h3>
+						<i class='bx bx-plus' ></i>
+						<i class='bx bx-filter' ></i>
+					</div>
+					<ul class="todo-list">
+						<li class="completed">
+							<p>Panadol</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="completed">
+							<p>Declophenac</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Ibruphen</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+						<li class="not-completed">
+							<p>Hedex</p>
+							<i class='bx bx-dots-vertical-rounded' ></i>
+						</li>
+					</ul>
+				</div> -->
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+    
+    <script>
+        let counter = 0;
+        let allTasks = 0;
+        // Function to make a GET request to your server-side proxy and populate the Users report table
+        function fetchData() {
+            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-activities'; // Replace with the actual URL of your server-side proxy
+        
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        const tasksData = data.activities;
+                        const tableBody = document.getElementById('table-body');
+                        
+                        allTasks = tasksData.length; // Update the global variable
+                        
+                        // Update the "Total Tasks Found" value in the box-info section
+                        document.getElementById('total-tasks').textContent = allTasks;
+                        
+                        tasksData.forEach(task => {
+                            counter++;
+                            const latitude = task.latitude;
+                            const longitude = task.longitude;
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${counter}</td>
+                                <td>${task.sales_rep_name}</td>
+                                <td>${Math.floor(Math.random() * 100)}</td>
+                                <td style="margin-right:40px;">${Math.floor(Math.random() * 8)}</td>
+                               <td>
+                                <i class='bx bx-dots-vertical-rounded' ></i>
+                                </td>
+                                                    `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        
+        // Load data when the page is ready
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+        <!-- JavaScript for displaying the map -->
+   <script>
+        // Function to display the map
+        function showMap(latitude, longitude) {
+            const mapContainer = document.querySelector('.map-container');
+            const map = L.map('map').setView([latitude, longitude], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            L.marker([latitude, longitude]).addTo(map)
+                .bindPopup('Pinned Location')
+                .openPopup();
+
+            mapContainer.style.display = 'block'; // Show the map container
+        }
+
+        // Event listener for the "Track" button
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('track-button')) {
+                const row = e.target.closest('tr');
+                const latitude = parseFloat(row.dataset.latitude);
+                const longitude = parseFloat(row.dataset.longitude);
+                showMap(latitude, longitude);
+            }
+        });
+    </script>
+</body>
+</html>

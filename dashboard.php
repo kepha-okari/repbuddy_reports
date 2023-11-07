@@ -9,7 +9,7 @@
 	<!-- My CSS -->
 	<link rel="stylesheet" href="style.css">
 
-	<title>AdminHub</title>
+	<title>RepBuddy</title>
 </head>
 <body>
 
@@ -58,7 +58,7 @@
 		<main>
 			<div class="head-title">
 				<div class="left">
-					<h1>Dashboard</h1>
+					<h1>Activity Dashboard</h1>
 					<ul class="breadcrumb">
 						<li>
 							<a href="#">Dashboard</a>
@@ -107,8 +107,8 @@
 						<thead>
 							<tr>
 								<th>NAME</th>
-								<th>TASKS</th>
-								<th>PENDING</th>
+								<th>AGENDAS</th>
+								<th>PRODUCTS</th>
 								<th>COMPLETED</th>
 								<th>RESCHEDULED</th>
 								<th>CANCELLED</th>
@@ -124,18 +124,18 @@
 
 
 					<script>
+						
 						let totalTasksCount = 0;
-						// Define and initialize other variables
 						let overallTotalCompleted = 0;
 						let overallCompletionRate = 0;
+
 						// Function to make a GET request and populate the table
 						function fetchData() {
 							// Replace with your API URL
-							const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2023-04-24';
+							const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
 
 							const currentDate = new Date();
 
-					
 							fetch(apiUrl)
 								.then(response => response.json())
 								.then(data => {
@@ -147,7 +147,6 @@
 
 										// Group activities by user name
 										const groupedActivities = groupActivitiesByUserName(activities);
-										
 
 										const tableBody = document.getElementById('table-body');
 
@@ -197,21 +196,6 @@
 								});
 						}
 
-						// Helper function to map status code to status text
-						function getStatusText(statusCode) {
-							switch (statusCode) {
-								case '0':
-									return 'Pending';
-								case '1':
-									return 'Process';
-								case '2':
-									return 'COMPLETED';
-								case '3':
-									return 'Other Status';
-								default:
-									return 'Unknown';
-							}
-						}
 
 						// Helper function to group activities by user name
 						function groupActivitiesByUserName(activities) {
@@ -232,6 +216,7 @@
 						document.addEventListener('DOMContentLoaded', () => {
 							fetchData();
 						});
+
 					</script>
 
 
@@ -248,3 +233,6 @@
 	<script src="script.js"></script>
 </body>
 </html>
+
+
+<!-- change the date and ip address -->
