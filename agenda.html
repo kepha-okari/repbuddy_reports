@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Your Target File</title>
+</head>
+<body>
+    <h1>Task Details</h1>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the JSON object from the URL
+            const params = new URLSearchParams(window.location.search);
+            const taskJSON = params.get('task');
+
+            if (taskJSON) {
+                try {
+                    // Parse the JSON object
+                    const task = JSON.parse(taskJSON);
+
+                    // Display the task details
+                    document.body.innerHTML += `
+                        <p><strong>Task ID:</strong> ${task.id}</p>
+                        <p><strong>Task Name:</strong> ${task.name}</p>
+                        <p><strong>Task Description:</strong> ${task.description}</p>
+                        <p><strong>Task Status:</strong> ${task.status}</p>
+                        <!-- Add more properties as needed -->
+                    `;
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            } else {
+                console.error('No task data found in the URL.');
+            }
+        });
+    </script>
+</body>
+</html>
