@@ -127,6 +127,8 @@
         let totalTasksCount = 0;
         let overallTotalCompleted = 0;
         let overallCompletionRate = 0;
+        let salesRepId = null;
+        let groupedActivities = {};
 
         // Function to make a GET request and populate the table
         function fetchData() {
@@ -145,7 +147,7 @@
                         const completedTasks = activities.filter(activity => activity.status === '2');
 
                         // Group activities by user name
-                        const groupedActivities = groupActivitiesByUserName(activities);
+                        groupedActivities = groupActivitiesByUserName(activities);
 
                         const tableBody = document.getElementById('table-body');
 
@@ -166,7 +168,7 @@
                                 
                                 const userGroup = groupedActivities[userName];
                                 const userActivities = userGroup.activities;
-                                const salesRepId = userGroup.salesRepId;
+                                salesRepId = userGroup.salesRepId;
                                 const productTotal = userGroup.productTotal;
                                 const ambassadorTotal = userGroup.ambassadorTotal;
 
@@ -211,27 +213,11 @@
 
         // Helper function to group activities by user name and sales_rep_id
         // function groupActivitiesByUserName(activities) {
-        //     const groupedActivities = {};
 
-        //     activities.forEach(activity => {
-        //         const userName = activity.names;
-        //         const salesRepId = activity.sales_rep_id;
-
-        //         if (!(userName in groupedActivities)) {
-        //             groupedActivities[userName] = {
-        //                 salesRepId: salesRepId,
-        //                 activities: []
-        //             };
-        //         }
-
-        //         groupedActivities[userName].activities.push(activity);
-        //     });
-
-        //     return groupedActivities;
-        // }
 
         function groupActivitiesByUserName(activities) {
             const groupedActivities = {};
+            // groupedActivities = {}; // make the object global
 
             activities.forEach(activity => {
                 const { names: userName, sales_rep_id: salesRepId, product_id: productId, ambassador_id: ambassadorId } = activity;
@@ -276,20 +262,19 @@
             const clickableRow = event.target.closest('tr.clickable-row');
             if (clickableRow) {
                 const userName = clickableRow.dataset.username;
-                // const salesRepId = getSalesRepIdForUser(userName); // Get salesRepId for the given userName
-                const salesRepId = 18; // Get salesRepId for the given userName
+                const salesRepId = getSalesRepIdForUser(userName); // Get salesRepId for the given userName
+                // const salesRepId = 18; 
 
-                // if (salesRepId !== null) {
-                    const url = `individual-weekplan.html?rep_id=${userName}`;
-                    updateSessionVariable(userName); // Update session variable
+                if (salesRepId !== null) {
+                    const url = `individual-weekplan.html?rep_id=${salesRepId}`;
 
                     // Redirect to individual-weekplan.html with salesRepId as a query parameter
                     window.location.href = url;
-                // } else {
-                //     console.error('SalesRepId not found for the user:', userName);
+                } else {
+                    console.error('SalesRepId not found for the user:', userName);
                     // Handle the case where salesRepId is not available
                     // Display an error message or perform a different action as needed
-                // }
+                }
             }
         });
 
