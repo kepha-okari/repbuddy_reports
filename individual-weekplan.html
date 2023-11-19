@@ -53,12 +53,12 @@
         <main>
             <div class="head-title">
                 <div class="left">
-                    <h1>Mr Kepha Okari</h1>
+                    <h1 id="rep-name"></h1>
                     <ul class="breadcrumb">
                         <li></li>
                         <li><i class='bx bx-chevron-right' ></i></li>
                         <li>
-                            <a class="active" href="index.php">Home</a>
+                            <a class="active" href="index.html">Home</a>
                         </li>
                     </ul>
                 </div>
@@ -121,7 +121,7 @@
         let allTasks = 0;
         // Function to make a GET request to your server-side proxy and populate the Users report table
         function fetchData() {
-            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-activities'; // Replace with the actual URL of your server-side proxy
+            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-activities?rep_id=18'; // Replace with the actual URL of your server-side proxy
         
             fetch(apiUrl)
                 .then(response => response.json())
@@ -140,14 +140,16 @@
                             const latitude = task.latitude;
                             const longitude = task.longitude;
 
+                            document.getElementById('rep-name').textContent = task.sales_rep_name;
+
                             const row = document.createElement('tr');
                             row.innerHTML = `
                                 <td>${counter}</td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${Math.floor(Math.random() * 8)}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${Math.floor(Math.random() * 8)}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${Math.floor(Math.random() * 8)}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${Math.floor(Math.random() * 8)}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${Math.floor(Math.random() * 8)}</a></td>
+                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
 
                                 <td>
                                     <i class='bx bx-dots-vertical-rounded'></i>

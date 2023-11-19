@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <title>Dashboard</title>
+</head>
+<body>
+    
+    <!-- SIDEBAR -->
+    <section id="sidebar"></section>
+    <script>
+        var sidebar = document.getElementById("sidebar");
+        
+        fetch('sidebar.html') // Replace 'sidebar.html' with the correct path to your sidebar content
+            .then(response => response.text())
+            .then(data => {
+                sidebar.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching sidebar:', error);
+            });
+    </script>
+    <!-- SIDEBAR -->
+    
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav id="navbarContainer"></nav>
+        <script>
+            var navbarContainer = document.getElementById("navbarContainer");
+            
+            fetch('navbar.html') // Replace 'navbar.html' with the correct path to your navigation bar content
+                .then(response => response.text())
+                .then(data => {
+                    navbarContainer.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching navigation bar:', error);
+                });
+        </script>
+        <!-- NAVBAR -->
+        
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1>Mr John Doe</h1>
+                    <ul class="breadcrumb">
+                        <li></li>
+                        <li><i class='bx bx-chevron-right' ></i></li>
+                        <li>
+                            <a class="active" href="index.php">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="single-task">
+                <h3>Task Details</h3>
+                <div id="task-details"></div>
+            </div>
+        </main>
+        <!-- MAIN -->
+        
+               
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                const taskJSON = urlParams.get('task');
+
+                if (taskJSON) {
+                    try {
+                        // Parse the JSON object from URL parameter
+                        const task = JSON.parse(decodeURIComponent(taskJSON));
+
+                        // Display the details of the fetched task
+                        const taskDetails = document.getElementById('task-details');
+                        taskDetails.innerHTML = `
+                            <p><strong>Task ID:</strong> ${task.id}</p>
+                            <p><strong>Task Title:</strong> ${task.title}</p>
+                            <p><strong>Task Body:</strong> ${task.body}</p>
+                            <!-- Adjust properties based on your data structure -->
+                        `;
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                    }
+                } else {
+                    console.error('No task data found in the URL.');
+                }
+            });
+        </script>
+
+    </section>
+    <!-- CONTENT -->
+</body>
+</html>

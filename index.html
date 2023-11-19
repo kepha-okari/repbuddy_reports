@@ -103,138 +103,212 @@
                                 <th>NAME</th>
                                 <th>AGENDAS</th>
                                 <th>PRODUCTS</th>
+                                <th>CLIENTS</th>
                                 <th>COMPLETED</th>
                                 <th>RESCHEDULED</th>
                                 <th>CANCELLED</th>
                                 <th>COMPLETION RATE %</th>
                                 <th>ACTION</th>
+                                <th >CODE</th>
+
                             </tr>
                         </thead>
 
                         <tbody id="table-body"></tbody> 
                     </table>
-
-                    <script>
-                        let totalTasksCount = 0;
-                        let overallTotalCompleted = 0;
-                        let overallCompletionRate = 0;
-
-                        // Function to make a GET request and populate the table
-                        function fetchData() {
-                            // Replace with your API URL
-                            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
-
-                            const currentDate = new Date();
-
-                            fetch(apiUrl)
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.status) {
-                                        const activities = data.data.activities;
-
-                                        const completedTasks = activities.filter(activity => activity.status === '2');
-
-                                        // Group activities by user name
-                                        const groupedActivities = groupActivitiesByUserName(activities);
-
-                                        const tableBody = document.getElementById('table-body');
-
-                                        // Loop through grouped activities
-                                        for (const userName in groupedActivities) {
-                                            if (groupedActivities.hasOwnProperty(userName)) {
-                                                const userActivities = groupedActivities[userName];
-
-                                                const row = document.createElement('tr');
-                                                row.classList.add('clickable-row'); // Add the clickable-row class
-                                                row.setAttribute('data-username', userName);
-
-                                                const pendingCount = userActivities.filter(activity => activity.status === '1').length;
-                                                const completedCount = userActivities.filter(activity => activity.status === '2').length;
-                                                const rescheduledCount = userActivities.filter(activity => activity.status === '3').length;
-                                                const cancelledCount = userActivities.filter(activity => activity.status === '4').length;
-
-                                                totalTasksCount = activities.length; // Update the global variable
-                                                overallTotalCompleted = completedTasks.length; // Update the global variable
-                                                overallCompletionRate = (overallTotalCompleted/totalTasksCount * 100); // Update the global variable
-
-                                                // Update the "Total Tasks" value in the box-info section
-                                                document.getElementById('total-tasks').textContent = totalTasksCount;
-                                                document.getElementById('overall-total-completed').textContent = overallTotalCompleted;
-                                                document.getElementById('overall-completion-rate').textContent = overallCompletionRate.toFixed(1)+"%";
-
-                                                const rate = (completedCount/userActivities.length * 100);
-                                                row.innerHTML = `
-                                                    <td>
-                                                        <img src="img/people.png">
-                                                        <p>${userName}</p>
-                                                    </td>
-                                                    <td>${userActivities.length}</td>
-                                                    <td>${pendingCount}</td>
-                                                    <td>${completedCount}</td>
-                                                    <td>${rescheduledCount}</td>
-                                                    <td>${cancelledCount}</td>
-                                                    <td>${rate.toFixed(1)}</td>
-                                                    <td><i class='bx bx-dots-vertical-rounded' ></i></td>
-                                                `;
-                                                tableBody.appendChild(row);
-                                            }
-                                        }
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching data:', error);
-                                });
-                        }
-
-                        // Helper function to group activities by user name
-                        function groupActivitiesByUserName(activities) {
-                            const groupedActivities = {};
-
-                            activities.forEach(activity => {
-                                if (activity.names in groupedActivities) {
-                                    groupedActivities[activity.names].push(activity);
-                                } else {
-                                    groupedActivities[activity.names] = [activity];
-                                }
-                            });
-
-                            return groupedActivities;
-                        }
-
-                        // Add click event listener to all elements with the class 'clickable-row'
-                        document.addEventListener('click', function (event) {
-                            const clickableRow = event.target.closest('tr.clickable-row');
-                            if (clickableRow) {
-                                const userName = clickableRow.dataset.username;
-
-                                // Make a request to the server to update the PHP session variable
-                                updateSessionVariable(userName);
-
-                                // Navigate to the new page
-                                window.location.href = 'individual-weekplan.html';
-                            }
-                        });
-
-                        // Function to update the PHP session variable
-                        function updateSessionVariable(userName) {
-                            // Make an AJAX request to the server to update the session variable
-                            const xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'update_session.php', true);
-                            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                            xhr.send(`username=${userName}`);
-                        }
-
-                        // Load data when the page is ready
-                        document.addEventListener('DOMContentLoaded', () => {
-                            fetchData();
-                        });
-                    </script>
                 </div>
             </div>
         </main>
         <!-- MAIN -->
     </section>
     <!-- CONTENT -->
+
+    <script>
+        let totalTasksCount = 0;
+        let overallTotalCompleted = 0;
+        let overallCompletionRate = 0;
+
+        // Function to make a GET request and populate the table
+        function fetchData() {
+            // Replace with your API URL
+            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
+            // const apiUrl = 'http://localhost/pharmacorp/backend/web/index.php/api/filter-task-status?start_date=2021-04-24';
+
+            const currentDate = new Date();
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        const activities = data.data.activities;
+
+                        const completedTasks = activities.filter(activity => activity.status === '2');
+
+                        // Group activities by user name
+                        const groupedActivities = groupActivitiesByUserName(activities);
+
+                        const tableBody = document.getElementById('table-body');
+
+                        totalTasksCount = activities.length; // Update the global variable
+                        overallTotalCompleted = completedTasks.length; // Update the global variable
+                        overallCompletionRate = (overallTotalCompleted/totalTasksCount * 100); // Update the global variable
+
+                        // Update the "Total Tasks" value in the box-info section
+                        document.getElementById('total-tasks').textContent = totalTasksCount;
+                        document.getElementById('overall-total-completed').textContent = overallTotalCompleted;
+                        document.getElementById('overall-completion-rate').textContent = overallCompletionRate.toFixed(1)+"%";
+
+                        // Loop through grouped activities
+                        for (const userName in groupedActivities) {
+                            if (groupedActivities.hasOwnProperty(userName)) {
+                                
+                                // const userActivities = groupedActivities[userName];
+                                
+                                const userGroup = groupedActivities[userName];
+                                const userActivities = userGroup.activities;
+                                const salesRepId = userGroup.salesRepId;
+                                const productTotal = userGroup.productTotal;
+                                const ambassadorTotal = userGroup.ambassadorTotal;
+
+
+                                const row = document.createElement('tr');
+                                row.classList.add('clickable-row'); // Add the clickable-row class
+                                row.setAttribute('data-username', userName);
+
+                                const pendingCount = userActivities.filter(activity => activity.status === '1').length;
+                                const completedCount = userActivities.filter(activity => activity.status === '2').length;
+                                const rescheduledCount = userActivities.filter(activity => activity.status === '3').length;
+                                const cancelledCount = userActivities.filter(activity => activity.status === '4').length;
+
+                                const rate = (completedCount/userActivities.length * 100);
+
+                                row.innerHTML = `
+                                    <td>
+                                        <img src="img/people.png">
+                                        <p>${userName}</p>
+                                    </td>
+                                    <td>${userActivities.length}</td>
+                                    <td>${productTotal}</td>
+                                    <td>${ambassadorTotal}</td>
+                                    <td style="color:green;">${completedCount}</td>
+                                    <td>${rescheduledCount}</td>
+                                    <td  style="color:red;">${cancelledCount}</td>
+                                    <td>${rate.toFixed(1)}</td>
+                                    <td><i class='bx bx-dots-vertical-rounded' ></i></td>
+                                    <td "></td>
+
+                                `;
+                                tableBody.appendChild(row);
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+
+        // Helper function to group activities by user name and sales_rep_id
+        // function groupActivitiesByUserName(activities) {
+        //     const groupedActivities = {};
+
+        //     activities.forEach(activity => {
+        //         const userName = activity.names;
+        //         const salesRepId = activity.sales_rep_id;
+
+        //         if (!(userName in groupedActivities)) {
+        //             groupedActivities[userName] = {
+        //                 salesRepId: salesRepId,
+        //                 activities: []
+        //             };
+        //         }
+
+        //         groupedActivities[userName].activities.push(activity);
+        //     });
+
+        //     return groupedActivities;
+        // }
+
+        function groupActivitiesByUserName(activities) {
+            const groupedActivities = {};
+
+            activities.forEach(activity => {
+                const { names: userName, sales_rep_id: salesRepId, product_id: productId, ambassador_id: ambassadorId } = activity;
+
+                if (!(userName in groupedActivities)) {
+                    groupedActivities[userName] = {
+                        salesRepId: salesRepId,
+                        activities: [],
+                        productTotal: 0,
+                        ambassadorTotal: 0
+                    };
+                }
+
+                groupedActivities[userName].activities.push(activity);
+                if (!groupedActivities[userName].productIds) {
+                    groupedActivities[userName].productIds = new Set();
+                }
+                if (!groupedActivities[userName].ambassadorIds) {
+                    groupedActivities[userName].ambassadorIds = new Set();
+                }
+                groupedActivities[userName].productIds.add(productId);
+                groupedActivities[userName].ambassadorIds.add(ambassadorId);
+            });
+
+            for (const userName in groupedActivities) {
+                if (groupedActivities.hasOwnProperty(userName)) {
+                    const userData = groupedActivities[userName];
+                    userData.productTotal = userData.productIds.size;
+                    userData.ambassadorTotal = userData.ambassadorIds.size;
+                    delete userData.productIds;
+                    delete userData.ambassadorIds;
+                }
+            }
+
+            return groupedActivities;
+        }
+
+
+        
+
+        document.addEventListener('click', function (event) {
+            const clickableRow = event.target.closest('tr.clickable-row');
+            if (clickableRow) {
+                const userName = clickableRow.dataset.username;
+                // const salesRepId = getSalesRepIdForUser(userName); // Get salesRepId for the given userName
+                const salesRepId = 18; // Get salesRepId for the given userName
+
+                // if (salesRepId !== null) {
+                    const url = `individual-weekplan.html?rep_id=${userName}`;
+                    updateSessionVariable(userName); // Update session variable
+
+                    // Redirect to individual-weekplan.html with salesRepId as a query parameter
+                    window.location.href = url;
+                // } else {
+                //     console.error('SalesRepId not found for the user:', userName);
+                    // Handle the case where salesRepId is not available
+                    // Display an error message or perform a different action as needed
+                // }
+            }
+        });
+
+        // Function to get salesRepId for a given userName
+        function getSalesRepIdForUser(userName) {
+            // Assuming groupedActivities is accessible in this context
+            if (groupedActivities.hasOwnProperty(userName)) {
+                return groupedActivities[userName].salesRepId;
+            }
+
+            return null;
+        }
+
+    
+        // Load data when the page is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchData();
+        });
+    </script>
 
     <script src="script.js"></script>
 </body>
