@@ -85,7 +85,7 @@
                         <thead>
                             <tr>
                                 <th>PRODUCT NAME</th>
-                                <th>ADOPTION STAGE</th>
+                                <th>ADOPTION AVERAGE</th>
                                 <th>REPS</th>
                                 <th>VISITS</th>
                                 <th>ACTION</th>

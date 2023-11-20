@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <!-- My CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <title>Dashboard</title>
+</head>
+<body>
+    
+    <!-- SIDEBAR -->
+    <section id="sidebar"></section>
+    <!-- JavaScript to load the navigation bar -->
+    <script>
+        var sidebar = document.getElementById("sidebar");
+        
+        fetch('sidebar.html') // Replace 'sidebar.html' with the correct path to your sidebar content
+            .then(response => response.text())
+            .then(data => {
+                sidebar.innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching sidebar:', error);
+            });
+    </script>
+    <!-- SIDEBAR -->
+    
+    <!-- CONTENT -->
+    <section id="content">
+        <!-- NAVBAR -->
+        <nav id="navbarContainer"></nav>
+        <!-- JavaScript to load the navigation bar -->
+        <script>
+            var navbarContainer = document.getElementById("navbarContainer");
+            
+            fetch('navbar.html') // Replace 'navbar.html' with the correct path to your navigation bar content
+                .then(response => response.text())
+                .then(data => {
+                    navbarContainer.innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching navigation bar:', error);
+                });
+        </script>
+        <!-- NAVBAR -->
+        
+        <!-- MAIN -->
+        <main>
+            <div class="head-title">
+                <div class="left">
+                    <h1 id="rep-name"></h1>
+                    <ul class="breadcrumb">
+                        <li></li>
+                        <li><i class='bx bx-chevron-right' ></i></li>
+                        <li>
+                            <a class="active" href="index.html">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <ul class="box-info">
+                <li>
+                    <i class='bx bxs-calendar-check'></i>
+                    <span class="text">
+                        <h3 id="total-tasks"></h3>
+                        <p>Agendas</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bxs-group'></i>
+                    <span class="text">
+                        <h3 id="overall-total-completed"></h3>
+                        <p>Total Completed</p>
+                    </span>
+                </li>
+                <li>
+                    <i class='bx bxs-dollar-circle'></i>
+                    <span class="text">
+                        <h3 id="overall-completion-rate"></h3>
+                        <p>Completion Rate</p>
+                    </span>
+                </li>
+            </ul>
+
+            
+            <div class="table-data">
+                <div class="order col-md-8">
+                    <div class="head">
+                        <h3>Weekly Agenda</h3>
+                        <i class='bx bx-search' ></i>
+                        <i class='bx bx-filter' ></i>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Monday</th>
+                                <th>Tuesday</th>
+                                <th>Wednesday</th>
+                                <th>Thursday</th>
+                                <th>Friday</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <!-- MAIN -->
+    </section>
+    <!-- CONTENT -->
+    
+    <script>
+        let counter = 0;
+        let allTasks = 0;
+
+        // Function to make a GET request to your server-side proxy and populate the Users report table
+        function fetchData() {
+
+const repId = getRepIdFromURL(); // Retrieve rep_id from the URL
+const apiUrl = `http://localhost/pharmacorp/backend/web/index.php/api/fetch-activities?rep_id=${repId}`;
+
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        if (data.status) {
+
+            
+        // console.log(data);
+
+        tasksData3 = data.activities;
+            mondayTasks = [];
+            tuesdayTasks = [];
+            wednesdayTasks = [];
+            thursdayTasks = [];
+            fridayTasks = [];
+
+            tasksData3.forEach(task => {
+            const scheduledDay = new Date(task.scheduled_date);
+            const dayOfWeek = scheduledDay.getDay();
+
+            switch (dayOfWeek) {
+                case 1: // Monday
+                mondayTasks.push(task);
+                break;
+                case 2: // Tuesday
+                tuesdayTasks.push(task);
+                break;
+                case 3: // Wednesday
+                wednesdayTasks.push(task);
+                break;
+                case 4: // Thursday
+                thursdayTasks.push(task);
+                break;
+                case 5: // Friday
+                fridayTasks.push(task);
+                break;
+                // Add cases for other days if needed
+                default:
+                break;
+            }
+            });
+
+            // Now you have tasks assigned to respective variables:
+            console.log('Monday Tasks:', mondayTasks);
+            console.log('Tuesday Tasks:', tuesdayTasks);
+            console.log('Wednesday Tasks:', wednesdayTasks);
+            console.log('Thursday Tasks:', thursdayTasks);
+            console.log('Friday Tasks:', fridayTasks);
+
+
+
+            console.log(data);
+            const tasksData = data.activities;
+            const tableBody = document.getElementById('table-body');
+            
+            allTasks = tasksData.length; // Update the global variable
+            
+            // Update the "Total Tasks Found" value in the box-info section
+            document.getElementById('total-tasks').textContent = allTasks;
+            
+            tasksData.forEach(task => {
+                counter++;
+                const latitude = task.latitude;
+                const longitude = task.longitude;
+
+                document.getElementById('rep-name').textContent = task.sales_rep_name;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${counter}</td>
+                    <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                    <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                    <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                    <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+                    <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
+
+                    <td>
+                        <i class='bx bx-dots-vertical-rounded'></i>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+}
+
+
+function getRepIdFromURL() {
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+return urlParams.get('rep_id');
+}
+
+                
+        // Load data when the page is ready
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+    
+               
+</body>
+</html>
+
+

@@ -72,29 +72,14 @@
                         <p>Agendas</p>
                     </span>
                 </li>
-                <li>
-                    <i class='bx bxs-group'></i>
-                    <span class="text">
-                        <h3 id="overall-total-completed"></h3>
-                        <p>Total Completed</p>
-                    </span>
-                </li>
-                <li>
-                    <i class='bx bxs-dollar-circle'></i>
-                    <span class="text">
-                        <h3 id="overall-completion-rate"></h3>
-                        <p>Completion Rate</p>
-                    </span>
-                </li>
+                <!-- Add more box-info items as needed -->
             </ul>
 
-            
             <div class="table-data">
                 <div class="order col-md-8">
                     <div class="head">
                         <h3>Weekly Agenda</h3>
-                        <i class='bx bx-search' ></i>
-                        <i class='bx bx-filter' ></i>
+                        <!-- You can add search or filter icons here -->
                     </div>
                     <table>
                         <thead>
@@ -117,87 +102,74 @@
     <!-- CONTENT -->
     
     <script>
-        let counter = 0;
-        let allTasks = 0;
-        // Function to make a GET request to your server-side proxy and populate the Users report table
         function fetchData() {
-            const apiUrl = 'http://161.35.6.91/pharmacorp/backend/web/index.php/api/fetch-activities?rep_id=18'; // Replace with the actual URL of your server-side proxy
-        
+            const repId = getRepIdFromURL(); // Retrieve rep_id from the URL
+            const apiUrl = `http://localhost/pharmacorp/backend/web/index.php/api/fetch-activities?rep_id=${repId}`;
+
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
                     if (data.status) {
                         const tasksData = data.activities;
-                        const tableBody = document.getElementById('table-body');
-                        
-                        allTasks = tasksData.length; // Update the global variable
-                        
-                        // Update the "Total Tasks Found" value in the box-info section
-                        document.getElementById('total-tasks').textContent = allTasks;
-                        
+
+                        const daysTasks = {
+                            Monday: [],
+                            Tuesday: [],
+                            Wednesday: [],
+                            Thursday: [],
+                            Friday: [],
+                        };
+                        // Organize tasks by day
                         tasksData.forEach(task => {
-                            counter++;
-                            const latitude = task.latitude;
-                            const longitude = task.longitude;
-
-                            document.getElementById('rep-name').textContent = task.sales_rep_name;
-
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${counter}</td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
-                                <td style="margin-right:40px;"><a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a></td>
-
-                                <td>
-                                    <i class='bx bx-dots-vertical-rounded'></i>
-                                </td>
-                            `;
-                            tableBody.appendChild(row);
+                            const scheduledDay = new Date(task.scheduled_date);
+                            const dayOfWeek = scheduledDay.toLocaleString('en-US', { weekday: 'long' });
+                            
+                            daysTasks[dayOfWeek].push(task);
                         });
+
+                        const tableBody = document.getElementById('table-body');
+
+                        // Create rows for each task
+                        const maxTasks = Math.max(...Object.values(daysTasks).map(dayTasks => dayTasks.length));
+                        for (let i = 0; i < maxTasks; i++) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td>${i + 1}</td>`;
+                            
+                            for (const day in daysTasks) {
+                                const cell = document.createElement('td');
+                                const tasksForDay = daysTasks[day];
+                                
+                                if (tasksForDay && tasksForDay[i]) {
+                                    const task = tasksForDay[i];
+                                    cell.innerHTML = `<a href="agenda.html?task=${encodeURIComponent(JSON.stringify(task))}">Agenda #${task.id}</a>`;
+                                } else {
+                                    cell.textContent = '-';
+                                }
+
+                                row.appendChild(cell);
+                            }
+
+                            tableBody.appendChild(row);
+                        }
+                        // console.log(daysTaskxs[0].length);
+
+                        // Update the "Total Tasks Found" value in the box-info section
+                        document.getElementById('total-tasks').textContent = tasksData.length;
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         }
-        
+
+        function getRepIdFromURL() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            return urlParams.get('rep_id');
+        }
+                
         // Load data when the page is ready
         document.addEventListener('DOMContentLoaded', fetchData);
     </script>
-    
-    <!-- JavaScript for displaying the map -->
-    <script>
-        // Function to display the map
-        function showMap(latitude, longitude) {
-            const mapContainer = document.querySelector('.map-container');
-            const map = L.map('map').setView([latitude, longitude], 15);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-            }).addTo(map);
-
-            L.marker([latitude, longitude]).addTo(map)
-                .bindPopup('Pinned Location')
-                .openPopup();
-
-            mapContainer.style.display = 'block'; // Show the map container
-        }
-
-        // Event listener for the "Track" button
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('track-button')) {
-                const row = e.target.closest('tr');
-                const latitude = parseFloat(row.dataset.latitude);
-                const longitude = parseFloat(row.dataset.longitude);
-                showMap(latitude, longitude);
-            }
-        });
-    </script>
-    
 </body>
 </html>
-
-
